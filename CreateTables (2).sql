@@ -1,0 +1,162 @@
+# Matthew Carter Dylan Wilcox
+CREATE TABLE CUSTOMER (
+	ID INT NOT NULL,
+	Phone_Number VARCHAR(45) NULL,
+	Name VARCHAR(45) NULL,
+	Address VARCHAR(45) NULL,
+	PRIMARY KEY (`ID`));
+
+CREATE TABLE ORDERS (
+	ID INT NOT NULL,
+	PRIMARY KEY (`ID`));
+
+CREATE TABLE PICKUP_ORDER (
+  Order_ID INT NOT NULL,
+  Customer_ID INT NULL,
+  PRIMARY KEY (`Order_ID`),
+  INDEX `Customer_ID_idx` (`Customer_ID` ASC),
+  CONSTRAINT `pickup_order_ID`
+    FOREIGN KEY (`Order_ID`)
+    REFERENCES ORDERS (`ID`)
+    ON DELETE RESTRICT
+    ON UPDATE RESTRICT,
+  CONSTRAINT `pickup_ustomer_ID`
+    FOREIGN KEY (`Customer_ID`)
+    REFERENCES CUSTOMER (`ID`)
+    ON DELETE RESTRICT
+    ON UPDATE RESTRICT);
+
+CREATE TABLE DELIVERY_ORDER (
+  Order_ID INT NOT NULL,
+  Customer_ID INT NULL,
+  PRIMARY KEY (`Order_ID`),
+  CONSTRAINT `delivery_order_id`
+    FOREIGN KEY (`Order_ID`)
+    REFERENCES ORDERS (`ID`)
+    ON DELETE RESTRICT
+    ON UPDATE RESTRICT,
+  CONSTRAINT `delivery_customer_id`
+    FOREIGN KEY (`Customer_ID`)
+    REFERENCES CUSTOMER (`ID`)
+    ON DELETE RESTRICT
+    ON UPDATE RESTRICT);
+
+CREATE TABLE DINE_IN (
+  order_id INT NOT NULL,
+  table_number INT NULL,
+  customer_id INT NULL,
+  PRIMARY KEY (`order_id`),
+  INDEX `cutstomer_idx` (`customer_id` ASC),
+  CONSTRAINT `order`
+    FOREIGN KEY (`order_id`)
+    REFERENCES ORDERS (`ID`)
+    ON DELETE RESTRICT
+    ON UPDATE RESTRICT,
+  CONSTRAINT `cutstomer`
+    FOREIGN KEY (`customer_id`)
+    REFERENCES CUSTOMER (`ID`)
+    ON DELETE RESTRICT
+    ON UPDATE RESTRICT);
+
+CREATE TABLE TOPPINGS (
+  ID INT NOT NULL, 
+  Name VARCHAR(20) NOT NULL, 
+  Price DECIMAL(4,2) NOT NULL, 
+  Cost_Per_Unit DECIMAL(4,2) NOT NULL, 
+  Inventory INT NOT NULL, 
+  small DECIMAL(4,2) NOT NULL, 
+  medium DECIMAL(4,2) NOT NULL, 
+  large DECIMAL(4,2) NOT NULL, 
+  x_large DECIMAL(4,2) NOT NULL, 
+  PRIMARY KEY(ID));
+
+CREATE TABLE BASE_PRICE (
+  ID  INT NOT NULL, 
+  Size VARCHAR(10) NOT NULL, 
+  Crust VARCHAR(12) NOT NULL, 
+  Price DECIMAL(4,2) NOT NULL, 
+  Cost DECIMAL(4,2) NOT NULL, 
+  PRIMARY KEY(ID));
+
+CREATE TABLE DISCOUNTS(
+  ID INT NOT NULL,
+  Name VARCHAR(45) NOT NULL,
+  Percent_discount INT, 
+  Dollar_amt DECIMAL(4,2),
+  PRIMARY KEY(ID));
+  
+ CREATE TABLE PIZZA(
+	ID INT NOT NULL,
+	Time_Stamp TIMESTAMP NOT NULL,
+	Status VARCHAR(30) NOT NULL,
+	Price DECIMAL(4,2) NOT NULL,
+	Cost_to_comp DECIMAL(4,2) NOT NULL,
+	Order_ID INT NOT NULL,
+	Base_Price_ID INT NOT NULL,
+	PRIMARY KEY(ID),
+	CONSTRAINT pizza_order
+		FOREIGN KEY (Order_ID) 
+        REFERENCES ORDERS(ID)
+        ON DELETE RESTRICT
+		ON UPDATE RESTRICT,
+	CONSTRAINT `pizza_base_price`
+		FOREIGN KEY (Base_Price_ID) 
+        REFERENCES BASE_PRICE(ID)
+        ON DELETE RESTRICT
+		ON UPDATE RESTRICT);
+   
+ CREATE TABLE DISCOUNT_ORDER(
+   Discount_ID INT NOT NULL,
+   Order_ID INT NOT NULL,
+   PRIMARY KEY (Discount_ID, Order_ID),
+   CONSTRAINT `discount_order_discount`
+       FOREIGN KEY (Discount_ID) 
+       REFERENCES DISCOUNTS(ID)
+       ON DELETE RESTRICT
+       ON UPDATE RESTRICT,
+   CONSTRAINT discount_order_order 
+       FOREIGN KEY (Order_ID) 
+       REFERENCES ORDERS(ID)
+       ON DELETE RESTRICT
+       ON UPDATE RESTRICT);
+   
+ CREATE TABLE SEAT(
+   Order_ID INT NOT NULL,
+   Seat_num INT,
+   PRIMARY KEY(Order_ID, Seat_num),
+   CONSTRAINT seat_order
+       FOREIGN KEY (Order_ID) 
+       REFERENCES ORDERS(ID)
+       ON DELETE RESTRICT
+       ON UPDATE RESTRICT);
+ 
+ CREATE TABLE DISCOUNT_PIZZA(
+   Discount_ID INT NOT NULL,
+   Pizza_ID INT NOT NULL,
+   PRIMARY KEY(Discount_ID, Pizza_ID),
+   CONSTRAINT discount_pizza_discount
+       FOREIGN KEY(Discount_ID) 
+       REFERENCES DISCOUNTS(ID)
+       ON DELETE RESTRICT
+       ON UPDATE RESTRICT,
+   CONSTRAINT discount_pizza_pizza    
+       FOREIGN KEY(Pizza_ID) 
+       REFERENCES PIZZA(ID)
+       ON DELETE RESTRICT
+       ON UPDATE RESTRICT);
+    
+ CREATE TABLE PIZZA_TOPPING(
+   Topping_ID INT NOT NULL,
+   Pizza_ID INT NOT NULL,
+   Extra VARCHAR(5),
+   PRIMARY KEY (Topping_ID, Pizza_ID),
+   CONSTRAINT pizza_topping_topping
+       FOREIGN KEY (Topping_ID) 
+       REFERENCES TOPPINGS(ID)
+       ON DELETE RESTRICT
+       ON UPDATE RESTRICT,
+   CONSTRAINT pizza_topping_pizza   
+       FOREIGN KEY (Pizza_ID) 
+       REFERENCES PIZZA(ID)
+       ON DELETE RESTRICT
+       ON UPDATE RESTRICT);   

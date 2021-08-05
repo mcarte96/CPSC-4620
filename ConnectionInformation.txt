@@ -1,0 +1,2 @@
+mysql -h mysql1.cs.clemson.edu -u AntnPzDB_27hk -p AntonPizzaDB_mu3m
+password: we_love_kevin
